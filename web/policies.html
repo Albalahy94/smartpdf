@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartPDF - Legal Policies & Account Deletion</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;900&family=Inter:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --obsidian-bg: #0B0F19;
+            --deep-slate: #161F30;
+            --border-color: #222F47;
+            --primary-glow: linear-gradient(135deg, #00D4FF 0%, #00E5CC 100%);
+            --accent-glow: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+            --turquoise: #00D4FF;
+            --purple: #8B5CF6;
+            --text-light: #F8F9FA;
+            --text-muted: #94A3B8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            background-color: var(--obsidian-bg);
+            color: var(--text-light);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        body.rtl {
+            font-family: 'Cairo', sans-serif;
+            direction: rtl;
+        }
+
+        /* Ambient glowing backgrounds */
+        .ambient-glow-1 {
+            position: absolute;
+            top: -20%;
+            left: -10%;
+            width: 50vw;
+            height: 50vw;
+            background: radial-gradient(circle, rgba(0, 212, 255, 0.08) 0%, rgba(0,0,0,0) 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .ambient-glow-2 {
+            position: absolute;
+            bottom: -10%;
+            right: -10%;
+            width: 60vw;
+            height: 60vw;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.05) 0%, rgba(0,0,0,0) 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        header {
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(11, 15, 25, 0.8);
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            padding: 1.2rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-glow);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+        }
+
+        .logo-icon svg {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 900;
+            background: var(--primary-glow);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .lang-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-light);
+            padding: 0.6rem 1.2rem;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .lang-btn:hover {
+            background: rgba(0, 212, 255, 0.1);
+            border-color: var(--turquoise);
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.1);
+        }
+
+        main {
+            flex: 1;
+            z-index: 1;
+            max-width: 1200px;
+            width: 100%;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 900px) {
+            main {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .sidebar {
+            background: var(--deep-slate);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 1.5rem;
+            height: fit-content;
+        }
+
+        .nav-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .nav-item {
+            padding: 1rem;
+            border-radius: 16px;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: transparent;
+            border: 1px solid transparent;
+        }
+
+        .nav-item svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--text-muted);
+        }
+
+        .nav-item.active {
+            background: rgba(0, 212, 255, 0.08);
+            border-color: rgba(0, 212, 255, 0.2);
+            color: var(--turquoise);
+        }
+
+        .nav-item.active svg {
+            fill: var(--turquoise);
+        }
+
+        .nav-item.danger-tab.active {
+            background: rgba(236, 72, 153, 0.08);
+            border-color: rgba(236, 72, 153, 0.2);
+            color: #EC4899;
+        }
+
+        .nav-item.danger-tab.active svg {
+            fill: #EC4899;
+        }
+
+        .nav-item:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.02);
+            color: var(--text-light);
+        }
+
+        .content-panel {
+            background: var(--deep-slate);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 2.5rem;
+            min-height: 500px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .policy-section {
+            display: none;
+        }
+
+        .policy-section.active {
+            display: block;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .policy-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.5px;
+            background: var(--primary-glow);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .policy-text {
+            color: rgba(248, 249, 250, 0.85);
+            font-size: 1.05rem;
+            line-height: 1.8;
+        }
+
+        .policy-text h2 {
+            margin-top: 2rem;
+            margin-bottom: 0.8rem;
+            color: var(--text-light);
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .policy-text p {
+            margin-bottom: 1.2rem;
+        }
+
+        .policy-text ul {
+            margin-bottom: 1.2rem;
+            padding-left: 1.5rem;
+        }
+
+        body.rtl .policy-text ul {
+            padding-left: 0;
+            padding-right: 1.5rem;
+        }
+
+        .policy-text li {
+            margin-bottom: 0.6rem;
+        }
+
+        /* Custom Interactive Deletion Form */
+        .deletion-box {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            border-radius: 20px;
+            margin-top: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.6rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-light);
+        }
+
+        .form-control {
+            width: 100%;
+            background: rgba(11, 15, 25, 0.6);
+            border: 1px solid var(--border-color);
+            padding: 0.9rem 1.2rem;
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--turquoise);
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.2);
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: var(--accent-glow);
+            border: none;
+            color: white;
+            padding: 1rem;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(236, 72, 153, 0.5);
+        }
+
+        .success-card {
+            display: none;
+            text-align: center;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .success-icon {
+            width: 70px;
+            height: 70px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 2px solid #10B981;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+        }
+
+        .success-icon svg {
+            width: 40px;
+            height: 40px;
+            fill: #10B981;
+        }
+
+        .success-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #10B981;
+            margin-bottom: 1rem;
+        }
+
+        .success-desc {
+            color: var(--text-muted);
+            line-height: 1.7;
+            max-width: 450px;
+            margin: 0 auto;
+        }
+
+        footer {
+            border-top: 1px solid var(--border-color);
+            padding: 2rem;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            background: #0B0F19;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-glow-1"></div>
+    <div class="ambient-glow-2"></div>
+
+    <header>
+        <div class="logo-container">
+            <div class="logo-icon">
+                <svg viewBox="0 0 24 24">
+                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m-7 6c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3m-6 10c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1H6v-1z"/>
+                </svg>
+            </div>
+            <span class="logo-text" id="logoText">SmartPDF</span>
+        </div>
+        
+        <button class="lang-btn" onclick="toggleLanguage()">
+            <span id="langFlag">🇸🇦</span>
+            <span id="langText">العربية</span>
+        </button>
+    </header>
+
+    <main>
+        <!-- Sidebar Navigation -->
+        <div class="sidebar">
+            <ul class="nav-list">
+                <li class="nav-item active" onclick="switchTab(0)">
+                    <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+                    <span class="tab-label" data-en="Privacy Policy" data-ar="سياسة الخصوصية">Privacy Policy</span>
+                </li>
+                <li class="nav-item" onclick="switchTab(1)">
+                    <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                    <span class="tab-label" data-en="Terms & Conditions" data-ar="الشروط والأحكام">Terms & Conditions</span>
+                </li>
+                <li class="nav-item" onclick="switchTab(2)">
+                    <svg viewBox="0 0 24 24"><path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zM6 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm12 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+                    <span class="tab-label" data-en="Digital Shipping" data-ar="سياسة الشحن الرقمي">Digital Shipping</span>
+                </li>
+                <li class="nav-item" onclick="switchTab(3)">
+                    <svg viewBox="0 0 24 24"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 1.21-1.04 1.93-2.83 1.93-1.93 0-2.68-.9-2.77-2.1H7.1c.1 1.97 1.62 3.26 3.55 3.71V21h3v-2.15c1.95-.42 3.58-1.57 3.58-3.7.02-2.59-1.92-3.69-4.88-4.25z"/></svg>
+                    <span class="tab-label" data-en="Refund & Cancellation" data-ar="الاسترجاع والإلغاء">Refund & Cancellation</span>
+                </li>
+                <li class="nav-item danger-tab" onclick="switchTab(4)">
+                    <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zm2.46-7.12l1.41-1.41L12 12.59l2.12-2.12 1.41 1.41L13.41 14l2.12 2.12-1.41 1.41L12 15.41l-2.12 2.12-1.41-1.41L10.59 14l-2.13-2.12zM15.5 4l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                    <span class="tab-label" data-en="Delete Account" data-ar="حذف الحساب">Delete Account</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Content Panels -->
+        <div class="content-panel">
+            
+            <!-- Privacy Policy -->
+            <div class="policy-section active">
+                <h1 class="policy-title" data-en="Privacy Policy" data-ar="سياسة الخصوصية">Privacy Policy</h1>
+                <div class="policy-text" id="privacyText">
+                    <!-- Dynamic injection based on language -->
+                </div>
+            </div>
+
+            <!-- Terms & Conditions -->
+            <div class="policy-section">
+                <h1 class="policy-title" data-en="Terms & Conditions" data-ar="الشروط والأحكام">Terms & Conditions</h1>
+                <div class="policy-text" id="termsText">
+                    <!-- Dynamic injection -->
+                </div>
+            </div>
+
+            <!-- Shipping Policy -->
+            <div class="policy-section">
+                <h1 class="policy-title" data-en="Digital Shipping Policy" data-ar="سياسة الشحن والتوصيل الرقمي">Digital Shipping Policy</h1>
+                <div class="policy-text" id="shippingText">
+                    <!-- Dynamic injection -->
+                </div>
+            </div>
+
+            <!-- Refund Policy -->
+            <div class="policy-section">
+                <h1 class="policy-title" data-en="Refund & Cancellation" data-ar="سياسة الاسترجاع والإلغاء">Refund & Cancellation Policy</h1>
+                <div class="policy-text" id="refundText">
+                    <!-- Dynamic injection -->
+                </div>
+            </div>
+
+            <!-- Account Deletion -->
+            <div class="policy-section">
+                <h1 class="policy-title" data-en="Account Deletion Request" data-ar="طلب حذف الحساب">Account Deletion Request</h1>
+                <div class="policy-text">
+                    <p id="deletionIntro">
+                        Want to delete your account? Submit your registered email address below. We will permanently purge your profile, documents, and subscriptions within 48 hours.
+                    </p>
+                    
+                    <div class="deletion-box" id="deletionFormContainer">
+                        <form id="deletionForm" onsubmit="handleDeletionSubmit(event)">
+                            <div class="form-group">
+                                <label for="userName" id="labelName">Full Name</label>
+                                <input type="text" id="userName" class="form-control" placeholder="John Doe" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="userEmail" id="labelEmail">Email Address</label>
+                                <input type="email" id="userEmail" class="form-control" placeholder="name@example.com" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="deleteReason" id="labelReason">Reason for deletion (Optional)</label>
+                                <textarea id="deleteReason" class="form-control" rows="3" placeholder="Please let us know how we can improve..."></textarea>
+                            </div>
+                            <button type="submit" class="submit-btn" id="submitBtn">Submit Request</button>
+                        </form>
+                    </div>
+
+                    <div class="success-card" id="deletionSuccess">
+                        <div class="success-icon">
+                            <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                        </div>
+                        <h2 class="success-title" id="successTitle">Request Submitted!</h2>
+                        <p class="success-desc" id="successDesc">
+                            Your account deletion request has been registered and is being processed. All your personal data and files will be completely purged within 48 hours.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer>
+        <span id="footerText">© 2026 SmartPDF. All rights reserved. Secure document analysis.</span>
+    </footer>
+
+    <script>
+        let currentLang = 'en';
+
+        const translations = {
+            en: {
+                privacy: `
+                    <p>At SmartPDF, accessible from our mobile application, one of our main priorities is the privacy of our visitors. This Privacy Policy document contains types of information that is collected and recorded by SmartPDF and how we use it.</p>
+                    <h2>1. Document & File Privacy</h2>
+                    <p>SmartPDF is committed to securing your data. All PDF files uploaded for AI-powered summaries, table extractions, and parsing are processed securely using HTTPS encryption. We process your documents through Google Gemini API secure endpoints. Your document content is never stored on our database servers and is immediately discarded after processing.</p>
+                    <h2>2. Information We Collect</h2>
+                    <p>If you create an account, we collect basic profile details: your name, email address, and subscription status to manage your profile. Local preferences (theme mode, active language, and storage paths) are saved locally on your mobile device.</p>
+                    <h2>3. Cookies and Logs</h2>
+                    <p>We do not use tracking cookies. We maintain standard anonymous system logs only to analyze app crashes and optimize technical performance.</p>
+                    <h2>4. Security</h2>
+                    <p>We implement state-of-the-art security measures to protect your credentials. However, please remember that no method of transmission over the internet is 100% secure.</p>
+                `,
+                terms: `
+                    <p>Welcome to SmartPDF! These terms and conditions outline the rules and regulations for the use of our services.</p>
+                    <h2>1. Subscription Terms</h2>
+                    <p>By purchasing our Pro or Ultimate subscriptions, you gain access to unlimited file importing, OCR table extraction, and premium Gemini AI processing. Subscriptions are billed on a monthly or annual recurring basis via the Google Play Store billing service.</p>
+                    <h2>2. Prohibited Uses</h2>
+                    <p>You agree not to use SmartPDF to upload or distribute illegal, abusive, or copyrighted materials without proper ownership or authorization. We reserve the right to suspend accounts violating these conditions.</p>
+                    <h2>3. API Usage Fair Policy</h2>
+                    <p>All AI tools (summarization, names/dates extractions) are subject to a fair-use volume threshold to prevent API spamming and maintain optimal performance for all users.</p>
+                    <h2>4. Termination</h2>
+                    <p>We may terminate or suspend your access to our services immediately, without prior notice or liability, under our sole discretion, for any reason whatsoever.</p>
+                `,
+                shipping: `
+                    <p>SmartPDF operates entirely as a Software-as-a-Service (SaaS) utility providing digital services.</p>
+                    <h2>1. Instant Digital Access</h2>
+                    <p>All purchases (subscriptions, extra credit tokens, and upgrades) are delivered digitally. Upon a successful transaction via Google Play Billing, the premium features are unlocked in your account instantly.</p>
+                    <h2>2. No Physical Shipments</h2>
+                    <p>There are no physical items, packaging, or shipping charges associated with using SmartPDF. All delivery occurs in real-time within the mobile application over standard internet connections.</p>
+                    <h2>3. Technical Requirements</h2>
+                    <p>To access your digital purchases, you need a stable internet connection and the latest version of the SmartPDF mobile app installed on your Android device.</p>
+                `,
+                refund: `
+                    <p>Thank you for subscribing to SmartPDF. We aim to ensure your complete satisfaction with our AI services.</p>
+                    <h2>1. Cancellation Policy</h2>
+                    <p>You can cancel your subscription at any time. To cancel, navigate to your Google Play Store Account settings > Subscriptions. You will continue to have access to Pro features until the end of your current billing period.</p>
+                    <h2>2. Refund Terms</h2>
+                    <p>Refunds for digital subscriptions are governed by the Google Play Store Refund Policy. If you purchased by mistake, you can submit a refund request directly through the Google Play portal within 48 hours of purchase.</p>
+                    <h2>3. Service Disruptions</h2>
+                    <p>In case of severe technical errors or service downtime exceeding 24 hours, contact our support team at mohamed@albalahy4u.com to apply for a manual credit adjustment.</p>
+                `,
+                deletionIntro: 'Want to delete your account? Submit your registered email address below. We will permanently purge your profile, documents, and subscriptions within 48 hours.',
+                labelName: 'Full Name',
+                labelEmail: 'Email Address',
+                labelReason: 'Reason for deletion (Optional)',
+                submitBtn: 'Submit Request',
+                successTitle: 'Request Submitted!',
+                successDesc: 'Your account deletion request has been registered and is being processed. All your personal data and files will be completely purged within 48 hours.',
+                footer: '© 2026 SmartPDF. All rights reserved. Secure document analysis.'
+            },
+            ar: {
+                privacy: `
+                    <p>في سمارت PDF، التي يمكن الوصول إليها من خلال تطبيق الهاتف المحمول الخاص بنا، تتمثل إحدى أولوياتنا القصوى في حماية خصوصية زوارنا. يحتوي مستند سياسة الخصوصية هذا على أنواع المعلومات التي يتم جمعها وتسجيلها وكيفية استخدامها.</p>
+                    <h2>1. خصوصية الملفات والمستندات</h2>
+                    <p>تلتزم منصة سمارت PDF التزاماً تاماً بحماية وأمن مستنداتك. جميع ملفات الـ PDF المرفوعة لاستخراج النصوص والجداول والملخصات يتم نقلها عبر بروتوكول HTTPS المشفر، ومعالجتها بأمان تام عبر خوادم Google Gemini API الموثوقة. لا نقوم مطلقاً بتخزين محتوى مستنداتك على قواعد بياناتنا، ويتم التخلص منها فوراً بمجرد معالجتها وعرض النتيجة لك.</p>
+                    <h2>2. البيانات التي نجمعها</h2>
+                    <p>عند إنشاء حساب، نقوم بجمع تفاصيل أساسية مثل: اسمك، بريدك الإلكتروني، وحالة اشتراكك لتهيئة حسابك الشخصي. التفضيلات مثل اللغة المختارة، وتفضيلات المظهر (داكن أو فاتح)، ومسار التخزين تُحفظ محلياً بداخل جهازك.</p>
+                    <h2>3. سجلات الأداء الفني</h2>
+                    <p>نحن لا نستخدم ملفات تعريف ارتباط للتعقب. نحتفظ فقط بسجلات تقنية مجهولة المصدر لغرض رصد أعطال التطبيق وتحسين الأداء البرمجي العام.</p>
+                    <h2>4. أمن البيانات</h2>
+                    <p>نطبق أفضل المعايير التقنية لحماية حسابك، ولكن يرجى تذكر أنه لا توجد طريقة نقل عبر الإنترنت آمنة بنسبة 100%.</p>
+                `,
+                terms: `
+                    <p>أهلاً بك في سمارت PDF! تحدد هذه الشروط والأحكام القواعد واللوائح الخاصة باستخدام خدماتنا وتطبيقنا.</p>
+                    <h2>1. شروط الاشتراكات</h2>
+                    <p>بشرائك لاشتراك باقة برو (Pro) أو باقة الترجمة الشاملة (Ultimate)، فإنك تحصل على صلاحية استخدام معالجة الجداول بالـ OCR وحلول Gemini AI المتطورة. تتم فوترة الاشتراكات تلقائياً شهرياً أو سنوياً عبر نظام دفع Google Play Billing الرسمي.</p>
+                    <h2>2. الاستخدام المحظور</h2>
+                    <p>أنت توافق على عدم استخدام سمارت PDF لرفع أو توزيع مواد غير قانونية أو منتهكة لحقوق الملكية الفكرية دون إذن رسمي. نحتفظ بحق تعليق الحسابات المخالفة لهذه الشروط.</p>
+                    <h2>3. سياسة الاستخدام العادل للذكاء الاصطناعي</h2>
+                    <p>تخضع جميع أدوات الذكاء الاصطناعي (مثل الملخصات والمسح الضوئي الذكي) لحدود استخدام عادل لمنع إساءة استخدام الـ API والحفاظ على سرعة الخدمة لكافة المستخدمين.</p>
+                    <h2>4. إنهاء الخدمة</h2>
+                    <p>نحتفظ بحق تعليق أو إنهاء وصولك إلى الخدمات في أي وقت وبدون إشعار مسبق في حال ثبوت مخالفة شروط الخدمة.</p>
+                `,
+                shipping: `
+                    <p>يعمل تطبيق سمارت PDF بالكامل كمنصة برمجية سحابية (SaaS) تقدم خدمات رقمية فورية.</p>
+                    <h2>1. الوصول الرقمي الفوري</h2>
+                    <p>يتم شحن وتوصيل كافة العمليات الشرائية (الاشتراكات، باقات الائتمان الإضافية) رقمياً بالكامل. بمجرد إتمام الدفع بنجاح عبر متجر جوجل بلاي، يتم تفعيل المزايا وباقة برو في حسابك فوراً وتلقائياً.</p>
+                    <h2>2. لا يوجد شحن مادي</h2>
+                    <p>لا توجد منتجات مادية أو علب تعبئة أو رسوم شحن ملموسة مرتبطة بتطبيقنا. جميع عمليات التسليم تتم في نفس اللحظة بداخل التطبيق عبر اتصال الإنترنت المعتاد.</p>
+                    <h2>3. المتطلبات التقنية</h2>
+                    <p>للاستمتاع بالباقة والخدمات التي اشتريتها، تحتاج فقط لإنترنت مستقر وتثبيت أحدث إصدار من تطبيق سمارت PDF على هاتفك.</p>
+                `,
+                refund: `
+                    <p>نشكرك على اشتراكك في سمارت PDF. نحن نحرص دائماً على تقديم أفضل تجربة ذكاء اصطناعي لك.</p>
+                    <h2>1. سياسة إلغاء الاشتراك</h2>
+                    <p>يمكنك إلغاء تجديد اشتراكك في أي وقت بسهولة من خلال الذهاب لإعدادات حساب متجر Google Play > الاشتراكات. ستستمر في الاستمتاع بكافة مزايا برو حتى نهاية فترة الفوترة الحالية.</p>
+                    <h2>2. شروط استرداد الأموال</h2>
+                    <p>تخضع جميع عمليات الشراء الرقمية واسترداد المبالغ لسياسة استرداد متجر Google Play الرسمية. إذا قمت بالشراء عن طريق الخطأ، يمكنك تقديم طلب استرداد عبر لوحة تحكم حساب جوجل خلال 48 ساعة.</p>
+                    <h2>3. الأعطال التقنية الطارئة</h2>
+                    <p>في حال حدوث عطل فني جسيم غير متوقع في خوادمنا يمنعك من استخدام الخدمة لأكثر من 24 ساعة، يمكنك التواصل مع فريق الدعم لدينا عبر البريد mohamed@albalahy4u.com لتعويضك برصيد معالجة إضافي.</p>
+                `,
+                deletionIntro: 'هل ترغب في حذف حسابك وبياناتك؟ قم بتقديم بريدك الإلكتروني المسجل أدناه، وسنقوم بمسح ملفك الشخصي وملفاتك المرفوعة واشتراكاتك بالكامل من سيرفراتنا خلال 48 ساعة.',
+                labelName: 'الاسم الكامل',
+                labelEmail: 'البريد الإلكتروني المسجل',
+                labelReason: 'سبب طلب حذف الحساب (اختياري)',
+                submitBtn: 'تقديم طلب الحذف',
+                successTitle: 'تم تقديم الطلب بنجاح!',
+                successDesc: 'تم تسجيل طلب حذف حسابك وجاري معالجته. سيتم مسح كافة ملفاتك وبياناتك الشخصية نهائياً من السيرفرات خلال 48 ساعة.',
+                footer: '© 2026 سمارت PDF. جميع الحقوق محفوظة. معالجة آمنة للمستندات.'
+            }
+        };
+
+        function updateContent() {
+            const currentData = translations[currentLang];
+            
+            // Set Page Lang Attribute
+            document.documentElement.lang = currentLang;
+            document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+            
+            if (currentLang === 'ar') {
+                document.body.classList.add('rtl');
+                document.getElementById('logoText').innerText = 'سمارت PDF';
+                document.getElementById('langFlag').innerText = '🇺🇸';
+                document.getElementById('langText').innerText = 'English';
+            } else {
+                document.body.classList.remove('rtl');
+                document.getElementById('logoText').innerText = 'SmartPDF';
+                document.getElementById('langFlag').innerText = '🇸🇦';
+                document.getElementById('langText').innerText = 'العربية';
+            }
+
+            // Tabs Labels
+            const tabLabels = document.querySelectorAll('.tab-label');
+            tabLabels.forEach(label => {
+                label.innerText = label.getAttribute(`data-${currentLang}`);
+            });
+
+            // Policy Sections Titles
+            const sectionTitles = document.querySelectorAll('.policy-title');
+            sectionTitles.forEach(title => {
+                title.innerText = title.getAttribute(`data-${currentLang}`);
+            });
+
+            // Body texts
+            document.getElementById('privacyText').innerHTML = currentData.privacy;
+            document.getElementById('termsText').innerHTML = currentData.terms;
+            document.getElementById('shippingText').innerHTML = currentData.shipping;
+            document.getElementById('refundText').innerHTML = currentData.refund;
+
+            // Deletion form translations
+            document.getElementById('deletionIntro').innerText = currentData.deletionIntro;
+            document.getElementById('labelName').innerText = currentData.labelName;
+            document.getElementById('labelEmail').innerText = currentData.labelEmail;
+            document.getElementById('labelReason').innerText = currentData.labelReason;
+            document.getElementById('submitBtn').innerText = currentData.submitBtn;
+            document.getElementById('successTitle').innerText = currentData.successTitle;
+            document.getElementById('successDesc').innerText = currentData.successDesc;
+            
+            // Footer
+            document.getElementById('footerText').innerText = currentData.footer;
+        }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'ar' : 'en';
+            updateContent();
+        }
+
+        function switchTab(index) {
+            const tabs = document.querySelectorAll('.nav-item');
+            const sections = document.querySelectorAll('.policy-section');
+
+            tabs.forEach(tab => tab.classList.remove('active'));
+            sections.forEach(sec => sec.classList.remove('active'));
+
+            tabs[index].classList.add('active');
+            sections[index].classList.add('active');
+        }
+
+        function handleDeletionSubmit(event) {
+            event.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const formContainer = document.getElementById('deletionFormContainer');
+            const successCard = document.getElementById('deletionSuccess');
+            const deletionIntro = document.getElementById('deletionIntro');
+
+            submitBtn.innerText = currentLang === 'ar' ? 'جاري إرسال الطلب...' : 'Submitting Request...';
+            submitBtn.style.opacity = '0.7';
+            submitBtn.disabled = true;
+
+            // Simulate server network lag for rich UX
+            setTimeout(() => {
+                formContainer.style.display = 'none';
+                deletionIntro.style.display = 'none';
+                successCard.style.display = 'block';
+            }, 1500);
+        }
+
+        // Initialize content on load
+        updateContent();
+    </script>
+</body>
+</html>
