@@ -87,7 +87,15 @@ jobs:
           project.save
           "
           flutter config --no-enable-swift-package-manager
-          flutter build ipa --release --export-options-plist=ios/ExportOptions.plist
+          flutter build ipa --release --export-options-plist=ios/ExportOptions.plist || true
+          
+          if [ ! -f build/ios/ipa/*.ipa ]; then
+            mkdir -p build/ios/ipa
+            xcodebuild -exportArchive \
+              -archivePath build/ios/archive/Runner.xcarchive \
+              -exportPath build/ios/ipa \
+              -exportOptionsPlist ios/ExportOptions.plist
+          fi
 
       - name: Upload to TestFlight
         env:
@@ -98,8 +106,7 @@ jobs:
           mkdir -p ~/.appstoreconnect/private_keys
           echo "$APPSTORE_PRIVATE_KEY" > ~/.appstoreconnect/private_keys/AuthKey_${APPSTORE_KEY_ID}.p8
 
-          ls -la build/ios/ipa || ls -la build/ios/archive || true
-          IPA_PATH=$(find . -name "*.ipa" | head -n 1)
+          IPA_PATH=$(find build/ios/ipa -name "*.ipa" | head -n 1)
           echo "Found IPA at: $IPA_PATH"
 
           xcrun altool --upload-app \
