@@ -60,7 +60,9 @@ jobs:
           security list-keychain -d user -s $KEYCHAIN_PATH
 
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-          cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
+          PROFILE_UUID=$(security cms -D -i $PP_PATH | grep -A1 UUID | tail -n1 | sed 's/.*<string>\(.*\)<\/string>.*/\1/')
+          cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles/${PROFILE_UUID}.mobileprovision
+          echo "PROFILE_UUID=${PROFILE_UUID}" >> $GITHUB_ENV
 
       - name: Build iOS App
         run: |
@@ -72,7 +74,7 @@ jobs:
           project.targets.each do |target|
             target.build_configurations.each do |config|
               config.build_settings['CODE_SIGN_STYLE'] = 'Manual'
-              config.build_settings['PROVISIONING_PROFILE_SPECIFIER'] = 'SmartPDF Production'
+              config.build_settings['PROVISIONING_PROFILE_SPECIFIER'] = ENV['PROFILE_UUID']
               config.build_settings['DEVELOPMENT_TEAM'] = '4KBR99CCMR'
             end
           end
