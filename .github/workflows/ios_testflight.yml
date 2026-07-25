@@ -79,8 +79,11 @@ jobs:
           project.save
           "
 
-          # Ensure CocoaPods specs are up to date and dependencies pre-installed
-          cd ios && pod repo update && pod install && cd ..
+          # Prepare Flutter iOS configuration and CocoaPods specs
+          flutter build ios --config-only --release
+          cd ios
+          pod install --repo-update
+          cd ..
 
           flutter build ipa --release --export-options-plist=ios/ExportOptions.plist
 
