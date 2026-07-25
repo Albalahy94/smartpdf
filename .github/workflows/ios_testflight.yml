@@ -79,6 +79,9 @@ jobs:
           project.save
           "
 
+          # Ensure CocoaPods specs are up to date and dependencies pre-installed
+          cd ios && pod repo update && pod install && cd ..
+
           flutter build ipa --release --export-options-plist=ios/ExportOptions.plist
 
       - name: Upload to TestFlight
