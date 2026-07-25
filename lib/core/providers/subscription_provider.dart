@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../models/subscription.dart';
 export '../models/subscription.dart';
@@ -5,8 +6,6 @@ import '../constants/subscription_plans.dart';
 export '../constants/subscription_plans.dart';
 
 part 'subscription_provider.g.dart';
-
-import 'dart:io';
 
 @riverpod
 class SubscriptionNotifier extends _$SubscriptionNotifier {
