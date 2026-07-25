@@ -79,12 +79,6 @@ jobs:
           project.save
           "
 
-          # Prepare Flutter iOS configuration and CocoaPods specs
-          flutter build ios --config-only --release
-          cd ios
-          pod install --repo-update
-          cd ..
-
           flutter build ipa --release --export-options-plist=ios/ExportOptions.plist
 
       - name: Upload to TestFlight
