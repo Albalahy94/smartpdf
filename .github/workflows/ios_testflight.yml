@@ -66,6 +66,8 @@ jobs:
 
       - name: Build iOS App
         run: |
+          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+          security unlock-keychain -p "${{ secrets.KEYCHAIN_PASSWORD }}" $KEYCHAIN_PATH
           flutter config --no-enable-swift-package-manager
           flutter build ipa --release --export-options-plist=ios/ExportOptions.plist --verbose
 
