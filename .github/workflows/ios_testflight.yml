@@ -79,6 +79,7 @@ jobs:
           project.save
           "
 
+          flutter config --no-enable-swift-package-manager
           flutter build ipa --release --export-options-plist=ios/ExportOptions.plist
 
       - name: Upload to TestFlight
