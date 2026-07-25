@@ -6,11 +6,28 @@ export '../constants/subscription_plans.dart';
 
 part 'subscription_provider.g.dart';
 
+import 'dart:io';
+
 @riverpod
 class SubscriptionNotifier extends _$SubscriptionNotifier {
   @override
   Subscription build() {
-    // Default to free plan
+    // For iOS (Apple App Store compliance): unlock all features for free, hide paywalls
+    if (Platform.isIOS) {
+      return Subscription(
+        plan: SubscriptionPlan.ultimate,
+        startDate: DateTime.now(),
+        isActive: true,
+        usageLimits: {
+          'ocr_server': 0,
+          'translation': 0,
+          'summaries': 0,
+          'pdf_to_word': 0,
+        },
+      );
+    }
+
+    // Default to free plan on Android/other
     return Subscription(
       plan: SubscriptionPlan.free,
       startDate: DateTime.now(),

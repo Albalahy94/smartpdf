@@ -33,11 +33,9 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen> {
   void initState() {
     super.initState();
     _pdfViewerController.addListener(() {
-      if (_pdfViewerController.pageNumber != null) {
-        setState(() {
-          _currentPage = _pdfViewerController.pageNumber!;
-        });
-      }
+      setState(() {
+        _currentPage = _pdfViewerController.pageNumber;
+      });
     });
   }
 

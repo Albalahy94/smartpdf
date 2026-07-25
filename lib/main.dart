@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,8 +20,10 @@ void main() async {
   // Pass all Flutter errors to Crashlytics
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
 
-  // Initialize Google Mobile Ads SDK
-  await MobileAds.instance.initialize();
+  // Initialize Google Mobile Ads SDK (Android only for now)
+  if (!Platform.isIOS) {
+    await MobileAds.instance.initialize();
+  }
 
   final prefs = await SharedPreferences.getInstance();
 

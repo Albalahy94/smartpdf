@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/providers/subscription_provider.dart';
@@ -57,29 +58,30 @@ class SettingsScreen extends ConsumerWidget {
                 );
               },
             ),
-            ListTile(
-              leading: Icon(
-                Icons.star,
-                color: subscription.isPro || subscription.isUltimate
-                    ? Colors.amber
-                    : Colors.grey,
+            if (!Platform.isIOS)
+              ListTile(
+                leading: Icon(
+                  Icons.star,
+                  color: subscription.isPro || subscription.isUltimate
+                      ? Colors.amber
+                      : Colors.grey,
+                ),
+                title: Text('${loc.translate('subscription')}: ${subscription.plan.name}'),
+                subtitle: Text(
+                  subscription.isPro || subscription.isUltimate
+                      ? '\$${subscription.plan.monthlyPrice.toStringAsFixed(2)}/month'
+                      : loc.translate('freePlan'),
+                ),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const SubscriptionScreen(),
+                    ),
+                  );
+                },
               ),
-              title: Text('${loc.translate('subscription')}: ${subscription.plan.name}'),
-              subtitle: Text(
-                subscription.isPro || subscription.isUltimate
-                    ? '\$${subscription.plan.monthlyPrice.toStringAsFixed(2)}/month'
-                    : loc.translate('freePlan'),
-              ),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const SubscriptionScreen(),
-                  ),
-                );
-              },
-            ),
 
             const Divider(height: 32, indent: 16, endIndent: 16),
 

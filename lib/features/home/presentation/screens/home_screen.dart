@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -35,7 +36,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _loadBannerAd();
+    if (!Platform.isIOS) {
+      _loadBannerAd();
+    }
   }
 
   void _loadBannerAd() {
@@ -78,7 +81,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             : files;
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final showBanner = subscription.hasAds && _isBannerAdReady && _bannerAd != null;
+    final showBanner = !Platform.isIOS && subscription.hasAds && _isBannerAdReady && _bannerAd != null;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
