@@ -72,6 +72,7 @@ jobs:
           project_path = 'ios/Runner.xcodeproj'
           project = Xcodeproj::Project.open(project_path)
           project.targets.each do |target|
+            next unless target.name == 'Runner'
             target.build_configurations.each do |config|
               config.build_settings['CODE_SIGN_STYLE'] = 'Manual'
               config.build_settings['CODE_SIGN_IDENTITY'] = 'Apple Distribution'
