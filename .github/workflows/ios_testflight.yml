@@ -98,7 +98,7 @@ jobs:
           mkdir -p ~/.appstoreconnect/private_keys
           echo "$APPSTORE_PRIVATE_KEY" > ~/.appstoreconnect/private_keys/AuthKey_${APPSTORE_KEY_ID}.p8
 
-          IPA_PATH=$(find build/ios/ipa -name "*.ipa" | head -n 1)
+          IPA_PATH=$(find build -name "*.ipa" | head -n 1)
           echo "Found IPA at: $IPA_PATH"
 
           xcrun altool --upload-app \
