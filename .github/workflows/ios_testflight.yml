@@ -62,6 +62,7 @@ jobs:
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           PROFILE_UUID=$(security cms -D -i $PP_PATH | grep -A1 UUID | tail -n1 | sed 's/.*<string>\(.*\)<\/string>.*/\1/')
           cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles/${PROFILE_UUID}.mobileprovision
+          sed -i '' "s/PROVISION_PROFILE_SPECIFIER_PLACEHOLDER/${PROFILE_UUID}/g" ios/ExportOptions.plist
           echo "PROFILE_UUID=${PROFILE_UUID}" >> $GITHUB_ENV
 
       - name: Build iOS App
