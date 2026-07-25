@@ -66,26 +66,8 @@ jobs:
 
       - name: Build iOS App
         run: |
-          gem install xcodeproj
-          ruby -e "
-          require 'xcodeproj'
-          project_path = 'ios/Runner.xcodeproj'
-          project = Xcodeproj::Project.open(project_path)
-          project.targets.each do |target|
-            next unless target.name == 'Runner'
-            target.build_configurations.each do |config|
-              config.build_settings['CODE_SIGN_STYLE'] = 'Manual'
-              config.build_settings['CODE_SIGN_IDENTITY'] = 'Apple Distribution'
-              config.build_settings['CODE_SIGN_IDENTITY[sdk=iphoneos*]'] = 'Apple Distribution'
-              config.build_settings['PROVISIONING_PROFILE_SPECIFIER'] = ENV['PROFILE_UUID']
-              config.build_settings['DEVELOPMENT_TEAM'] = '4KBR99CCMR'
-            end
-          end
-          project.save
-          "
-
           flutter config --no-enable-swift-package-manager
-          flutter build ipa --release --export-options-plist=ios/ExportOptions.plist
+          flutter build ipa --release --export-options-plist=ios/ExportOptions.plist --verbose
 
       - name: Upload to TestFlight
         env:
