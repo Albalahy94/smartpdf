@@ -1,5 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/providers/subscription_provider.dart';
 import '../../../../core/providers/profile_provider.dart';
@@ -62,6 +64,77 @@ class ProfileScreen extends ConsumerWidget {
                 profile.email,
                 style: const TextStyle(color: Colors.grey),
               ),
+              if (Platform.isIOS) ...[
+                const SizedBox(height: 16),
+                if (!profile.isAppleSignedIn)
+                  SignInWithAppleButton(
+                    onPressed: () async {
+                      try {
+                        final credential = await SignInWithApple.getAppleIDCredential(
+                          scopes: [
+                            AppleIDAuthorizationScopes.email,
+                            AppleIDAuthorizationScopes.fullName,
+                          ],
+                        );
+
+                        final String name = credential.givenName != null
+                            ? '${credential.givenName} ${credential.familyName ?? ""}'
+                            : (profile.name != 'User Name' ? profile.name : 'Apple User');
+                        final String email = credential.email ?? profile.email;
+
+                        await ref.read(profileProvider.notifier).saveAppleCredential(
+                              name: name,
+                              email: email,
+                              userId: credential.userIdentifier ?? '',
+                            );
+
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                isAr
+                                    ? 'تم تسجيل الدخول بحساب Apple بنجاح!'
+                                    : 'Successfully signed in with Apple!',
+                              ),
+                              backgroundColor: Colors.green,
+                            ),
+                          );
+                        }
+                      } catch (e) {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                isAr ? 'فشل تسجيل الدخول بـ Apple' : 'Apple Sign In cancelled or failed',
+                              ),
+                            ),
+                          );
+                        }
+                      }
+                    },
+                    style: isDark ? SignInWithAppleButtonStyle.white : SignInWithAppleButtonStyle.black,
+                  )
+                else
+                  TextButton.icon(
+                    onPressed: () async {
+                      await ref.read(profileProvider.notifier).signOutApple();
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              isAr ? 'تم تسجيل الخروج من Apple' : 'Signed out from Apple',
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                    icon: const Icon(Icons.logout, color: Colors.redAccent),
+                    label: Text(
+                      isAr ? 'تسجيل الخروج من Apple' : 'Sign Out from Apple',
+                      style: const TextStyle(color: Colors.redAccent),
+                    ),
+                  ),
+              ],
               const SizedBox(height: 32),
               
               // Subscription details container
