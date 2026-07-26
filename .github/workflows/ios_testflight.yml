@@ -87,8 +87,9 @@ jobs:
           end
           project.save
           "
+          BUILD_NUM=${GITHUB_RUN_NUMBER:-3}
           flutter config --no-enable-swift-package-manager
-          flutter build ipa --release --export-options-plist=ios/ExportOptions.plist || true
+          flutter build ipa --release --build-number=$BUILD_NUM --export-options-plist=ios/ExportOptions.plist || true
           
           if [ ! -f build/ios/ipa/*.ipa ]; then
             mkdir -p build/ios/ipa
