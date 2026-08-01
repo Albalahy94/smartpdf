@@ -14,15 +14,21 @@ import 'core/localization/app_localizations.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase
-  await Firebase.initializeApp();
-
-  // Pass all Flutter errors to Crashlytics
-  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+  // Initialize Firebase with error handling
+  try {
+    await Firebase.initializeApp();
+    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+  } catch (e) {
+    debugPrint("Firebase initialization failed: $e");
+  }
 
   // Initialize Google Mobile Ads SDK (Android only for now)
-  if (!Platform.isIOS) {
-    await MobileAds.instance.initialize();
+  try {
+    if (!Platform.isIOS) {
+      await MobileAds.instance.initialize();
+    }
+  } catch (e) {
+    debugPrint("MobileAds initialization failed: $e");
   }
 
   final prefs = await SharedPreferences.getInstance();
